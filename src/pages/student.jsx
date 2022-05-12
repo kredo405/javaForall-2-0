@@ -20,13 +20,13 @@ const Student = () => {
             .then(res => res.json())
             .then(
                 (result) => {
-                    setFirstName(result.user[0].firstName);
-                    setLastName(result.user[0].lastName);
-                    setPatronymic(result.user[0].patronymic);
-                    setAge(result.user[0].age);
-                    setPosition(result.user[0].position);
-                    setStack(result.user[0].stack);
-                    setDay(result.user[0].daysWorkList);
+                    setFirstName(result.firstName);
+                    setLastName(result.lastName);
+                    setPatronymic(result.patronymic);
+                    setAge(result.age);
+                    setPosition(result.position);
+                    setStack(result.stack);
+                    setDay(result.daysWorkList);
                     console.log(result)
 
                 },
