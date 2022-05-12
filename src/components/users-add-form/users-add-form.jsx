@@ -27,7 +27,6 @@ class UsersAddForm extends Component {
     }
     strStack = ''
 
-
     onValueChange = (e) => {
         this.setState({
             [e.target.name]: e.target.value
@@ -36,8 +35,8 @@ class UsersAddForm extends Component {
 
     onValueChecked = (e) => {
         const checkObj = {};
-        for(let key in this.state.checkBox) {
-            if(key === e.target.name) {
+        for (let key in this.state.checkBox) {
+            if (key === e.target.name) {
                 checkObj[key] = !this.state.checkBox[key];
             } else {
                 checkObj[key] = this.state.checkBox[key];
@@ -67,13 +66,12 @@ class UsersAddForm extends Component {
         })
     }
 
-
     onSubmit = (e) => {
         e.preventDefault();
         // if (this.state.name.length < 3 || !this.state.salary) return;
         this.props.onAdd(this.state.firstName, this.state.lastName, this.state.patronymic,
-             this.state.age, this.state.daysWorkList, this.state.experience,
-             this.state.position, this.state.stack);
+            this.state.age, this.state.daysWorkList, this.state.experience,
+            this.state.position, this.state.stack);
 
         this.setState({
             firstName: '',
@@ -98,7 +96,7 @@ class UsersAddForm extends Component {
     }
 
     render() {
-        const { firstName, lastName, patronymic, age, experience, position, checkBox, stackValue} = this.state;
+        const { firstName, lastName, patronymic, age, experience, position, checkBox, stackValue } = this.state;
 
         return (
             <div className="app-add-form">

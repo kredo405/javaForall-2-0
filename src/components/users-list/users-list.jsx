@@ -1,18 +1,17 @@
 import UsersListItem from "../users-list-item/users-list-item";
-
 import './user-list.css';
 
-const UsersList = ({data, onDelete, onToggleProp}) => {
+const UsersList = ({ data, onDelete, onToggleProp }) => {
     const elements = data.map(item => {
-        const {id, ...itemProps} = item;
+        const { id, ...itemProps } = item;
         return (
-            <UsersListItem 
-                key={id} 
+            <UsersListItem
+                key={id}
                 {...itemProps}
                 id={id}
                 onDelete={() => onDelete(id)}
                 onToggleProp={(e) => onToggleProp(id, e.currentTarget.getAttribute('data-toggle'))}
-                />
+            />
         )
     })
 

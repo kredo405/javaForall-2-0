@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import avatar from './photo.jpg';
 import './student.scss';
 
-
 const Student = () => {
 
     const [firstName, setFirstName] = useState(null);
@@ -14,32 +13,31 @@ const Student = () => {
     const [stack, setStack] = useState([]);
     const [day, setDay] = useState([]);
 
+    const { id } = useParams();
 
-     const { id } = useParams();
-
-     useEffect(() => {
+    useEffect(() => {
         fetch(`https://javaforall.tech/api/front/developer/${id}`)
-        .then(res => res.json())
-        .then(
-          (result) => {
-            setFirstName(result.user[0].firstName);
-            setLastName(result.user[0].lastName);
-            setPatronymic(result.user[0].patronymic);
-            setAge(result.user[0].age);
-            setPosition(result.user[0].position);
-            setStack(result.user[0].stack);
-            setDay(result.user[0].daysWorkList);
-            console.log(result)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    setFirstName(result.user[0].firstName);
+                    setLastName(result.user[0].lastName);
+                    setPatronymic(result.user[0].patronymic);
+                    setAge(result.user[0].age);
+                    setPosition(result.user[0].position);
+                    setStack(result.user[0].stack);
+                    setDay(result.user[0].daysWorkList);
+                    console.log(result)
 
-          },
-          (error) => {
-            // setIsLoaded(true);
-            // setError(error);
-          }
-          )
-        }, [])
-     
-     return (
+                },
+                (error) => {
+                    // setIsLoaded(true);
+                    // setError(error);
+                }
+            )
+    }, [])
+
+    return (
         <div className="profile">
             <div className="profile__img-wrapper">
                 <img src={avatar} alt="аватар" />
@@ -77,11 +75,10 @@ const Student = () => {
 
             </div>
         </div>
-        
     )
- }
+}
 
-   
+
 
 
 export default Student

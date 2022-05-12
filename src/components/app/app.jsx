@@ -5,7 +5,6 @@ import NavBar from '../navbar/navbar';
 import JavaForallSevices from '../../services/javaForalServices';
 import Student from '../../pages/student';
 import Home from '../../pages/home';
-
 import './app.css';
 
 class App extends Component {
@@ -32,6 +31,7 @@ class App extends Component {
                 })
             })
     }
+
     deleteItem = (id) => {
         this.setState(({ users }) => {
             return {
@@ -63,7 +63,6 @@ class App extends Component {
             },
             body: JSON.stringify(newItem)
         }).then(response => console.log(response));
-
 
         this.setState(({ users }) => {
             const newArr = [...users, newItem];
