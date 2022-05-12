@@ -2,7 +2,7 @@ import AppInfo from '../components/app-info/app-info';
 import SearchPanel from '../components/search-panel/search-panel';
 import AppFilter from '../components/app-filter/app-filter';
 import UsersList from '../components/users-list/users-list';
-import UsersAddForm from '../components/employees-add-form/users-add-form';
+import UsersAddForm from '../components/users-add-form/users-add-form';
 
 const Home = ({onUpdateSearch, filter, onFilterSelect, users, data, onDelete, onToggleProp, onAdd}) => {
     return (

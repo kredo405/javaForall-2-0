@@ -18,7 +18,7 @@ const Student = () => {
      const { id } = useParams();
 
      useEffect(() => {
-        fetch(`http://localhost:8000/NB-bet-link/${id}`)
+        fetch(`https://javaforall.tech/api/front/developer/${id}`)
         .then(res => res.json())
         .then(
           (result) => {

@@ -9,7 +9,7 @@ class JavaForallSevices {
     }
 
     getAllUsers = () => {
-        return this.getResource('http://localhost:8000/NB-bet-links');
+        return this.getResource('https://javaforall.tech/api/front/developer');
     }
     // getUser = (id) => {
     //     return this.getResource(`http://localhost:8000/NB-bet-link/${id}`);
