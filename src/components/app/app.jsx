@@ -59,13 +59,23 @@ class App extends Component {
             stack,
             id: randomId,
         }
+        const body = {
+            age,
+            daysWorkList,
+            experience,
+            firstName,
+            lastName,
+            patronymic,
+            position,
+            stack,
+        }
         fetch('https://javaforall.tech/api/front/developer', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
                  'Access-Control-Allow-Origin': '*',
             },
-            body: JSON.stringify(newItem)
+            body: JSON.stringify(body)
         }).then(response => console.log(response))
             .catch(function (error) {
                 console.error(error);
