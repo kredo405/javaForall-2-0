@@ -24,8 +24,8 @@ class App extends Component {
         this.javaForalServices
             .getAllUsers()
             .then(res => {
-                console.log(res.data)
-                const elements = res.data;
+                console.log(res)
+                const elements = res;
                 this.setState({
                     users: [...elements],
                 })
@@ -39,7 +39,10 @@ class App extends Component {
             }
         })
         fetch(`https://javaforall.tech/api/front/developer/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                 'Access-Control-Allow-Origin': '*',
+            },
         })
     }
 
@@ -59,10 +62,14 @@ class App extends Component {
         fetch('https://javaforall.tech/api/front/developer', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json;charset=utf-8'
+                'Content-Type': 'application/json;charset=utf-8',
+                 'Access-Control-Allow-Origin': '*',
             },
             body: JSON.stringify(newItem)
-        }).then(response => console.log(response));
+        }).then(response => console.log(response))
+            .catch(function (error) {
+                console.error(error);
+            });
 
         this.setState(({ users }) => {
             const newArr = [...users, newItem];
