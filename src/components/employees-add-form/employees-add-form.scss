@@ -1,0 +1,44 @@
+.app-add-form {
+    margin-top: 30px;
+    padding: 25px;
+    background-color: #3d5a80;
+    border-radius: 4px;
+    box-shadow: 15px 15px 30px rgba(0,0,0, .15);
+    color: #fff;
+    h3 {
+        text-align: center;
+    }
+}
+
+.add-form {
+    margin-top: 20px;
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+}
+
+.add-form {
+    .form-control {
+        width: 350px;
+        margin-right: 20px;
+        margin-top: 10px;
+    }
+    
+}
+.btn-outline-light {
+    margin-top: 20px;
+}
+
+.dayChecbox {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 20px;
+    border: 2px solid rgb(160, 160, 160);
+    border-radius: 6px;
+    padding: 10px;
+    input {
+        margin:10px 10px 0px 10px;
+    }
+
+}
