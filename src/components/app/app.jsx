@@ -1,12 +1,6 @@
 import { Component } from 'react';
 import { Routes, Route } from 'react-router-dom'
-import axios from 'axios';
-import { nanoid } from 'nanoid'
-import AppInfo from '../app-info/app-info';
-import SearchPanel from '../search-panel/search-panel';
-import AppFilter from '../app-filter/app-filter';
-import EmployeesList from '../employees-list/employees-list';
-import EmployeesAddForm from '../employees-add-form/employees-add-form';
+import { nanoid } from 'nanoid';
 import NavBar from '../navbar/navbar';
 import JavaForallSevices from '../../services/javaForalServices';
 import Student from '../../pages/student';
@@ -21,29 +15,31 @@ class App extends Component {
     }
     state = {
         users: [],
-        term: '', 
+        term: '',
         filter: 'all'
     }
-    
+
     javaForalServices = new JavaForallSevices();
-// javaForalServices.getUser(id).then(res => console.log(res));
 
     updateUsers = () => {
         this.javaForalServices
             .getAllUsers()
             .then(res => {
                 console.log(res.data)
-             const elements = res.data;   
-             this.setState({
-                users: [...elements],
+                const elements = res.data;
+                this.setState({
+                    users: [...elements],
                 })
             })
     }
     deleteItem = (id) => {
-        this.setState(({users}) => {
+        this.setState(({ users }) => {
             return {
                 users: users.filter(item => item.id !== id)
             }
+        })
+        fetch(`https://javaforall.tech/api/front/developer/${id}`, {
+            method: 'DELETE'
         })
     }
 
@@ -53,14 +49,23 @@ class App extends Component {
             age,
             daysWorkList,
             experience,
-            firstName, 
+            firstName,
             lastName,
             patronymic,
             position,
             stack,
             id: randomId,
         }
-        this.setState(({users}) => {
+        fetch('https://javaforall.tech/api/front/developer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(newItem)
+        }).then(response => console.log(response));
+
+
+        this.setState(({ users }) => {
             const newArr = [...users, newItem];
             return {
                 users: newArr
@@ -79,10 +84,10 @@ class App extends Component {
     }
 
     onUpdateSearch = (term) => {
-        this.setState({term});
+        this.setState({ term });
     }
 
-    
+
 
     filterPost = (items, filter) => {
         switch (filter) {
@@ -93,42 +98,47 @@ class App extends Component {
             case 'WEDNESDAY':
                 return items.filter(item => item.daysWorkList.includes('WEDNESDAY'));
             case 'THURSDAY':
-                return items.filter(item => item.daysWorkList.includes('THURSDAY'));   
+                return items.filter(item => item.daysWorkList.includes('THURSDAY'));
             case 'FRIDAY':
                 return items.filter(item => item.daysWorkList.includes('FRIDAY'));
             case 'SATURDAY':
                 return items.filter(item => item.daysWorkList.includes('SATURDAY'));
             case 'SUNDAY':
-                return items.filter(item => item.daysWorkList.includes('SUNDAY')); 
+                return items.filter(item => item.daysWorkList.includes('SUNDAY'));
             default:
                 return items
         }
     }
 
     onFilterSelect = (filter) => {
-        this.setState({filter});
+        this.setState({ filter });
     }
 
     render() {
-        const {users, term, filter} = this.state;
+        const { users, term, filter } = this.state;
         const qunUsers = this.state.users.length;
         const visibleData = this.filterPost(this.searchEmp(users, term), filter);
 
         return (
             <div className="app">
-                <NavBar/>
-                <div className="search-panel">
-                    <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
-                    <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
-                </div>
-                <AppInfo 
-                    users={qunUsers}
-                />
-                <EmployeesList 
-                    data={visibleData}
-                    onDelete={this.deleteItem}
-                    onToggleProp={this.onToggleProp}/>
-                <EmployeesAddForm onAdd={this.addItem}/>
+                <NavBar />
+                <Routes>
+                    <Route path="/" element={
+                        <Home
+                            onUpdateSearch={this.onUpdateSearch}
+                            filter={filter}
+                            onFilterSelect={this.onFilterSelect}
+                            users={qunUsers}
+                            data={visibleData}
+                            onDelete={this.deleteItem}
+                            onToggleProp={this.onToggleProp}
+                            onAdd={this.addItem}
+                        />
+                    } />
+                    <Route path="/student/:id" element={
+                        <Student />
+                    } />
+                </Routes>
             </div>
         );
     }

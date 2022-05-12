@@ -6,6 +6,9 @@
 .list-group-item:last-child {
     border-bottom: none;
 }
+.link {
+    text-decoration: none;
+}
 
 .list-group-item span {
     line-height: 35px;

@@ -1,24 +1,25 @@
 import AppInfo from '../components/app-info/app-info';
 import SearchPanel from '../components/search-panel/search-panel';
 import AppFilter from '../components/app-filter/app-filter';
-import EmployeesList from '../components/employees-list/employees-list';
-import EmployeesAddForm from '../components/employees-add-form/employees-add-form';
+import UsersList from '../components/users-list/users-list';
+import UsersAddForm from '../components/employees-add-form/users-add-form';
 
-const Home = (props) => {
+const Home = ({onUpdateSearch, filter, onFilterSelect, users, data, onDelete, onToggleProp, onAdd}) => {
     return (
-    // <div className="search-panel">
-    //  <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
-    // <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
-    // </div>
-    // <AppInfo 
-    //     users={qunUsers}
-    // />
-    // <EmployeesList 
-    //     data={visibleData}
-    //     onDelete={this.deleteItem}
-    //     onToggleProp={this.onToggleProp}/>
-    // <EmployeesAddForm onAdd={this.addItem}/>
-    <p>fdsjgksdmg;</p>
+        <div className='home'>
+            <div className="search-panel">
+                <SearchPanel onUpdateSearch={onUpdateSearch} />
+                <AppFilter filter={filter} onFilterSelect={onFilterSelect} />
+            </div>
+            <AppInfo
+                users={users}
+            />
+            <UsersList
+                data={data}
+                onDelete={onDelete}
+                onToggleProp={onToggleProp} />
+            <UsersAddForm onAdd={onAdd} />
+        </div>
     )
 }
 

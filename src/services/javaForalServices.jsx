@@ -11,9 +11,9 @@ class JavaForallSevices {
     getAllUsers = () => {
         return this.getResource('http://localhost:8000/NB-bet-links');
     }
-    getUser = (id) => {
-        return this.getResource(`http://localhost:8000/NB-bet-link/${id}`);
-    }
+    // getUser = (id) => {
+    //     return this.getResource(`http://localhost:8000/NB-bet-link/${id}`);
+    // }
 }
 
 export default JavaForallSevices;
