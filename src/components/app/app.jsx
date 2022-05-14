@@ -5,6 +5,7 @@ import NavBar from '../navbar/navbar';
 import JavaForallSevices from '../../services/javaForalServices';
 import Student from '../../pages/student';
 import Home from '../../pages/home';
+import ErrorMessage from '../error-message/error-message';
 import './app.css';
 
 class App extends Component {
@@ -15,10 +16,19 @@ class App extends Component {
     state = {
         users: [],
         term: '',
-        filter: 'all'
+        filter: 'all',
+        isError: false,
+        error: '',
     }
 
     javaForalServices = new JavaForallSevices();
+    errorFalse = () => {
+        this.setState(() => {
+            return {
+                isError: false,
+            }
+        });
+    }
 
     updateUsers = () => {
         this.javaForalServices
@@ -29,7 +39,15 @@ class App extends Component {
                 this.setState({
                     users: [...elements],
                 })
-            })
+            }).catch(function (error) {
+                console.error(error);
+                this.setState(() => {
+                    return {
+                        isError: true,
+                        error: error
+                    }
+                });
+            });
     }
 
     deleteItem = (id) => {
@@ -41,9 +59,17 @@ class App extends Component {
         fetch(`https://javaforall.tech/api/front/developer/${id}`, {
             method: 'DELETE',
             headers: {
-                 'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': '*',
             },
-        })
+        }).catch((error) => {
+            console.error(error);
+            this.setState(() => {
+                return {
+                    isError: true,
+                    error: error
+                }
+            });
+        });
     }
 
     addItem = (firstName, lastName, patronymic, age, daysWorkList, experience, position, stack) => {
@@ -73,12 +99,18 @@ class App extends Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
-                 'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': '*',
             },
             body: JSON.stringify(body)
         }).then(response => console.log(response))
-            .catch(function (error) {
+            .catch((error) => {
                 console.error(error);
+                this.setState(() => {
+                    return {
+                        isError: true,
+                        error: error
+                    }
+                });
             });
 
         this.setState(({ users }) => {
@@ -131,32 +163,60 @@ class App extends Component {
     }
 
     render() {
-        const { users, term, filter } = this.state;
+        const { users, term, filter, isError, error, } = this.state;
         const qunUsers = this.state.users.length;
         const visibleData = this.filterPost(this.searchEmp(users, term), filter);
 
-        return (
-            <div className="app">
-                <NavBar />
-                <Routes>
-                    <Route path="/" element={
-                        <Home
-                            onUpdateSearch={this.onUpdateSearch}
-                            filter={filter}
-                            onFilterSelect={this.onFilterSelect}
-                            users={qunUsers}
-                            data={visibleData}
-                            onDelete={this.deleteItem}
-                            onToggleProp={this.onToggleProp}
-                            onAdd={this.addItem}
-                        />
-                    } />
-                    <Route path="/student/:id" element={
-                        <Student />
-                    } />
-                </Routes>
-            </div>
-        );
+        if (isError) {
+            return (
+                <div className="app">
+                    <NavBar />
+                    <Routes>
+                        <Route path="/" element={
+                            <Home
+                                onUpdateSearch={this.onUpdateSearch}
+                                filter={filter}
+                                onFilterSelect={this.onFilterSelect}
+                                users={qunUsers}
+                                data={visibleData}
+                                onDelete={this.deleteItem}
+                                onToggleProp={this.onToggleProp}
+                                onAdd={this.addItem}
+                            />
+                        } />
+                        <Route path="/student/:id" element={
+                            <Student />
+                        } />
+                    </Routes>
+                    <div className="error">
+                        <ErrorMessage func={() => this.errorFalse()} error={error} />
+                    </div>
+                </div>
+            );
+        } else {
+            return (
+                <div className="app">
+                    <NavBar />
+                    <Routes>
+                        <Route path="/" element={
+                            <Home
+                                onUpdateSearch={this.onUpdateSearch}
+                                filter={filter}
+                                onFilterSelect={this.onFilterSelect}
+                                users={qunUsers}
+                                data={visibleData}
+                                onDelete={this.deleteItem}
+                                onToggleProp={this.onToggleProp}
+                                onAdd={this.addItem}
+                            />
+                        } />
+                        <Route path="/student/:id" element={
+                            <Student />
+                        } />
+                    </Routes>
+                </div>
+            );
+        }
     }
 }
 

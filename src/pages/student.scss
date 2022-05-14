@@ -2,20 +2,30 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas: 'img info';
+
     &__img-wrapper {
         grid-area: img;
         display: flex;
         justify-content: center;
         align-items: center;
     }
+
     &__info {
         grid-area: info;
     }
+
     &__item {
         display: flex;
         justify-content: flex-start;
+
         p {
             margin-right: 20px;
         }
+    }
+
+    &__error {
+        position: fixed;
+        left: 65%;
+        top: 80%;
     }
 }

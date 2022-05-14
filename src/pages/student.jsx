@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import ErrorMessage from '../components/error-message/error-message';
 import avatar from './photo.jpg';
 import './student.scss';
 
@@ -12,6 +13,8 @@ const Student = () => {
     const [position, setPosition] = useState(null);
     const [stack, setStack] = useState([]);
     const [day, setDay] = useState([]);
+    const [error, setError] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const { id } = useParams();
 
@@ -31,51 +34,97 @@ const Student = () => {
 
                 },
                 (error) => {
-                    // setIsLoaded(true);
-                    // setError(error);
+                    setError(error);
+                    setIsLoaded(true);
                 }
             )
-    }, [])
+    }, []);
 
-    return (
-        <div className="profile">
-            <div className="profile__img-wrapper">
-                <img src={avatar} alt="аватар" />
+    if (isLoaded) {
+        return (
+            <div className="profile">
+                <div className="profile__img-wrapper">
+                    <img src={avatar} alt="аватар" />
+                </div>
+                <div className="profile__info">
+                    <h3 className="profile">Информация</h3>
+                    <div className="profile__item">
+                        <p id='name'>Имя:</p>
+                        <label htmlFor="name">{lastName}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Фамилия:</p>
+                        <label htmlFor="name">{firstName}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Отчество:</p>
+                        <label htmlFor="name">{patronymic}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Возвраст:</p>
+                        <label htmlFor="name">{age}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Позиция:</p>
+                        <label htmlFor="name">{position}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Стек:</p>
+                        <label htmlFor="name">{stack.toString()}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Дни:</p>
+                        <label htmlFor="name">{day.toString()}</label>
+                    </div>
+                </div>
+                <div className="profile__error">
+                    <ErrorMessage error={error}/>
+                </div>
             </div>
-            <div className="profile__info">
-                <h3 className="profile">Информация</h3>
-                <div className="profile__item">
-                    <p id='name'>Имя:</p>
-                    <label htmlFor="name">{lastName}</label>
+        )
+    } else {
+        return (
+            <div className="profile">
+                <div className="profile__img-wrapper">
+                    <img src={avatar} alt="аватар" />
                 </div>
-                <div className="profile__item">
-                    <p id='name'>Фамилия:</p>
-                    <label htmlFor="name">{firstName}</label>
+                <div className="profile__info">
+                    <h3 className="profile">Информация</h3>
+                    <div className="profile__item">
+                        <p id='name'>Имя:</p>
+                        <label htmlFor="name">{lastName}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Фамилия:</p>
+                        <label htmlFor="name">{firstName}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Отчество:</p>
+                        <label htmlFor="name">{patronymic}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Возвраст:</p>
+                        <label htmlFor="name">{age}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Позиция:</p>
+                        <label htmlFor="name">{position}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Стек:</p>
+                        <label htmlFor="name">{stack.toString()}</label>
+                    </div>
+                    <div className="profile__item">
+                        <p id='name'>Дни:</p>
+                        <label htmlFor="name">{day.toString()}</label>
+                    </div>
                 </div>
-                <div className="profile__item">
-                    <p id='name'>Отчество:</p>
-                    <label htmlFor="name">{patronymic}</label>
-                </div>
-                <div className="profile__item">
-                    <p id='name'>Возвраст:</p>
-                    <label htmlFor="name">{age}</label>
-                </div>
-                <div className="profile__item">
-                    <p id='name'>Позиция:</p>
-                    <label htmlFor="name">{position}</label>
-                </div>
-                <div className="profile__item">
-                    <p id='name'>Стек:</p>
-                    <label htmlFor="name">{stack.toString()}</label>
-                </div>
-                <div className="profile__item">
-                    <p id='name'>Дни:</p>
-                    <label htmlFor="name">{day.toString()}</label>
-                </div>
+            </div>
+        )
+    }
 
-            </div>
-        </div>
-    )
+
+
 }
 
 
