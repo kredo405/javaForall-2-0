@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/javaForall-2-0/static/css/main.35b28095.css",
-    "main.js": "/javaForall-2-0/static/js/main.f72b245e.js",
+    "main.js": "/javaForall-2-0/static/js/main.d537e3f1.js",
     "static/js/787.9a2af9bf.chunk.js": "/javaForall-2-0/static/js/787.9a2af9bf.chunk.js",
     "index.html": "/javaForall-2-0/index.html",
     "main.35b28095.css.map": "/javaForall-2-0/static/css/main.35b28095.css.map",
-    "main.f72b245e.js.map": "/javaForall-2-0/static/js/main.f72b245e.js.map",
+    "main.d537e3f1.js.map": "/javaForall-2-0/static/js/main.d537e3f1.js.map",
     "787.9a2af9bf.chunk.js.map": "/javaForall-2-0/static/js/787.9a2af9bf.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.35b28095.css",
-    "static/js/main.f72b245e.js"
+    "static/js/main.d537e3f1.js"
   ]
 }
