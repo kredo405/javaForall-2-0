@@ -1,78 +1,96 @@
-import { Component } from 'react';
-import { Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import { nanoid } from 'nanoid';
 import NavBar from '../navbar/navbar';
 import JavaForallSevices from '../../services/javaForalServices';
 import Student from '../../pages/student';
 import Home from '../../pages/home';
 import ErrorMessage from '../error-message/error-message';
+import Registration from '../../pages/registration/registration';
+import Auth from '../../pages/auth/auth';
+import axios from 'axios';
+import { _BASE_URL_DATA } from '../../services/javaForalServices';
 import './app.css';
 
-class App extends Component {
-    constructor(props) {
-        super(props);
-        this.updateUsers();
-    }
-    state = {
-        users: [],
-        term: '',
-        filter: 'all',
-        isError: false,
-        error: '',
-    }
+const App = () => {
 
-    javaForalServices = new JavaForallSevices();
-    errorFalse = () => {
-        this.setState(() => {
-            return {
-                isError: false,
-            }
-        });
-    }
+    const [users, setUsers] = useState([]);
+    const [term, setTerm] = useState('');
+    const [filter, setFilter] = useState('all');
+    const [isError, setIsError] = useState(false);
+    const [error, setError] = useState('');
+    const [isAuth, setIsAuth] = useState(false);
 
-    updateUsers = () => {
-        this.javaForalServices
+    let token = localStorage.getItem("token");
+    let expires = localStorage.getItem("expires_in");
+    const history = useNavigate();
+
+    useEffect(() => {
+        const javaForalServices = new JavaForallSevices();
+
+        javaForalServices
             .getAllUsers()
-            .then(res => {
-                console.log(res)
-                const elements = res;
-                this.setState({
-                    users: [...elements],
-                })
-            }).catch(function (error) {
+            .then((response) => {
+                console.log(response);
+                const elements = response.data;
+                setUsers([...elements]);
+            })
+            .catch((error) => {
                 console.error(error);
-                this.setState(() => {
-                    return {
-                        isError: true,
-                        error: error
-                    }
-                });
-            });
-    }
-
-    deleteItem = (id) => {
-        this.setState(({ users }) => {
-            return {
-                users: users.filter(item => item.id !== id)
-            }
-        })
-        fetch(`https://javaforall.tech/api/front/developer/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-        }).catch((error) => {
-            console.error(error);
-            this.setState(() => {
-                return {
-                    isError: true,
-                    error: error
+                if (error.response.data !== undefined && error.response.data !== '') {
+                    setIsError(true);
+                    setError(error.response.data);
+                } else {
+                    setIsError(true);
+                    setError(error);
                 }
             });
-        });
+    }, []);
+
+    const deleteItem = (id) => {
+        if (isAuth) {
+            setUsers(users.filter(item => item.id !== id));
+        } else {
+            history('/auth');
+        }
+
+
+        const deleteUser = () => {
+            const options = {
+                method: 'DELETE',
+                url: `${_BASE_URL_DATA}/api/front/developer/${id}`,
+                mode: 'cors',
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            axios
+                .request(options)
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    if (error.response.data !== undefined && error.response.data !== '') {
+                        setIsError(true);
+                        setError(error.response.data);
+                    } else {
+                        setIsError(true);
+                        setError(error);
+                    }
+                });
+        }
+
+        if (Date.now() < expires && isAuth) {
+            deleteUser();
+        } else if (isAuth && Date.now() >= expires) {
+            const javaForalServices = new JavaForallSevices();
+            javaForalServices.refreshToken(deleteUser);
+        }
     }
 
-    addItem = (firstName, lastName, patronymic, age, daysWorkList, experience, position, stack) => {
+    const addItem = (firstName, lastName, patronymic, age, daysWorkList, experience, position, stack) => {
         const randomId = nanoid()
         const newItem = {
             age,
@@ -95,33 +113,51 @@ class App extends Component {
             position,
             stack,
         }
-        fetch('https://javaforall.tech/api/front/developer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'Access-Control-Allow-Origin': '*',
-            },
-            body: JSON.stringify(body)
-        }).then(response => console.log(response))
-            .catch((error) => {
-                console.error(error);
-                this.setState(() => {
-                    return {
-                        isError: true,
-                        error: error
+
+        const addUser = () => {
+            const options = {
+                method: 'POST',
+                url: `${_BASE_URL_DATA}/api/front/developer`,
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Access-Control-Allow-Origin': '*',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(body),
+            };
+            axios
+                .request(options)
+                .then(function (response) {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    if (error.response.data !== undefined && error.response.data !== '') {
+                        setIsError(true);
+                        setError(error.response.data);
+                    } else {
+                        setIsError(true);
+                        setError(error);
                     }
                 });
-            });
+        }
 
-        this.setState(({ users }) => {
+        if (Date.now() < expires && isAuth) {
+            addUser();
+        } else if (isAuth && Date.now() >= expires) {
+            const javaForalServices = new JavaForallSevices();
+            javaForalServices.refreshToken(addUser);
+        }
+        if (isAuth) {
             const newArr = [...users, newItem];
-            return {
-                users: newArr
-            }
-        });
+            setUsers(newArr);
+        } else {
+            history('/auth');
+        }
     }
 
-    searchEmp = (items, term) => {
+    const searchEmp = (items, term) => {
         if (term.length === 0) {
             return items;
         }
@@ -131,13 +167,11 @@ class App extends Component {
         })
     }
 
-    onUpdateSearch = (term) => {
-        this.setState({ term });
+    const onUpdateSearch = (term) => {
+        setTerm(term);
     }
 
-
-
-    filterPost = (items, filter) => {
+    const filterPost = (items, filter) => {
         switch (filter) {
             case 'MONDAY':
                 return items.filter(item => item.daysWorkList.includes('MONDAY'));
@@ -158,66 +192,57 @@ class App extends Component {
         }
     }
 
-    onFilterSelect = (filter) => {
-        this.setState({ filter });
+    const onFilterSelect = (filter) => {
+        setFilter(filter);
     }
 
-    render() {
-        const { users, term, filter, isError, error, } = this.state;
-        const qunUsers = this.state.users.length;
-        const visibleData = this.filterPost(this.searchEmp(users, term), filter);
-
-        if (isError) {
-            return (
-                <div className="app">
-                    <NavBar />
-                    <Routes>
-                        <Route path="/" element={
-                            <Home
-                                onUpdateSearch={this.onUpdateSearch}
-                                filter={filter}
-                                onFilterSelect={this.onFilterSelect}
-                                users={qunUsers}
-                                data={visibleData}
-                                onDelete={this.deleteItem}
-                                onToggleProp={this.onToggleProp}
-                                onAdd={this.addItem}
-                            />
-                        } />
-                        <Route path="/student/:id" element={
-                            <Student />
-                        } />
-                    </Routes>
-                    <div className="error">
-                        <ErrorMessage func={() => this.errorFalse()} error={error} />
-                    </div>
-                </div>
-            );
-        } else {
-            return (
-                <div className="app">
-                    <NavBar />
-                    <Routes>
-                        <Route path="/" element={
-                            <Home
-                                onUpdateSearch={this.onUpdateSearch}
-                                filter={filter}
-                                onFilterSelect={this.onFilterSelect}
-                                users={qunUsers}
-                                data={visibleData}
-                                onDelete={this.deleteItem}
-                                onToggleProp={this.onToggleProp}
-                                onAdd={this.addItem}
-                            />
-                        } />
-                        <Route path="/student/:id" element={
-                            <Student />
-                        } />
-                    </Routes>
-                </div>
-            );
-        }
+    const setAuth = () => {
+        setIsAuth(true);
     }
+    const setAuthOutput = () => {
+        setIsAuth(false);
+        localStorage.clear();
+    }
+
+    const qunUsers = users.length;
+    const visibleData = filterPost(searchEmp(users, term), filter);
+
+    return (
+        <div className="app">
+            <NavBar isAuth={isAuth} setIsAuth={() => setAuthOutput()} />
+            <Routes>
+                <Route path="/" element={
+                    <Home
+                        onUpdateSearch={onUpdateSearch}
+                        filter={filter}
+                        onFilterSelect={onFilterSelect}
+                        users={qunUsers}
+                        data={visibleData}
+                        onDelete={deleteItem}
+                        onAdd={addItem}
+                        isAuth={isAuth}
+                    />
+                } />
+                <Route path="/student/:id" element={
+                    isAuth ? <Student isAuth={isAuth} /> : <Auth setIsAuth={() => { setAuth() }} />
+                } />
+                <Route path="/auth" element={
+                    <Auth setIsAuth={() => { setAuth() }} />
+                } />
+                <Route path="/registration" element={
+                    <Registration />
+                } />
+
+            </Routes>
+            <div className="error">
+                {isError ?
+                    <ErrorMessage
+                        error={error}
+                        setError={() => setIsError(false)} />
+                    : null}
+            </div>
+        </div>
+    );
 }
 
 export default App;

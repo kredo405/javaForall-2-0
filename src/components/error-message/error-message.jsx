@@ -1,20 +1,16 @@
 import { Alert, CloseButton } from 'react-bootstrap';
-import { useState } from 'react';
 import './erorr-message.scss';
 
 const ErrorMessage = (props) => {
-    const { name } = props;
-    const [className, setClassName] = useState(name);
-    const setStateClassName = () => {
-        setClassName('error hideError');
-        props.func();
+    const setIsError = () => {
+        props.setError();
     }
 
     return (
-        <div className={className}>
+        <div className='error'>
             <Alert key='danger' variant='danger'>
                 {props.error.message}
-                <CloseButton  onClick={setStateClassName}/>
+                <CloseButton  onClick={setIsError}/>
             </Alert>
         </div>
     )

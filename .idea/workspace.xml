@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9d163e4a-f100-4618-b10f-5f390fef1b94" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/app/app.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/app/app.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/error-message/error-message.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/error-message/error-message.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/navbar/navbar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/navbar/navbar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/navbar/navbar.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/navbar/navbar.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/search-panel/search-panel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/search-panel/search-panel.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/users-add-form/users-add-form.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/users-add-form/users-add-form.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/users-list-item/users-list-item.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/users-list-item/users-list-item.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/users-list/users-list.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/users-list/users-list.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/student.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/student.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/javaForalServices.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/javaForalServices.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="29WqbSykQmSCSUeap5lWZoaJhD0" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9d163e4a-f100-4618-b10f-5f390fef1b94" name="Changes" comment="" />
+      <created>1653239342658</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1653239342658</updated>
+      <workItem from="1653239362412" duration="90000" />
+    </task>
+    <servers />
+  </component>
+</project>

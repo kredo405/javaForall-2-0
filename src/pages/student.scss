@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-areas: 'img info';
+    position: relative;
 
     &__img-wrapper {
         grid-area: img;
@@ -13,6 +14,17 @@
     &__info {
         grid-area: info;
     }
+
+    &__spinner {
+        position: fixed;
+        left: 45%;
+        top: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+    }
+
 
     &__item {
         display: flex;

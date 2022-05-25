@@ -68,7 +68,6 @@ class UsersAddForm extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        // if (this.state.name.length < 3 || !this.state.salary) return;
         this.props.onAdd(this.state.firstName, this.state.lastName, this.state.patronymic,
             this.state.age, this.state.daysWorkList, this.state.experience,
             this.state.position, this.state.stack);

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import './users-list-item.css';
 
 const UsersListItem = (props) => {
-    const { firstName, lastName, patronymic, onDelete, id } = props;
+    const { firstName, lastName, patronymic, onDelete, id} = props;
     return (
         <li className="list-group-item d-flex justify-content-between">
             <Link className='link' to={`/student/${id}`}>
