@@ -1,10 +1,21 @@
 import { Navbar, Container, Nav } from 'react-bootstrap';
+import KeycloakServices from '../../services/keycloakServices';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom'
 import './navbar.scss';
 
 const NavBar = (props) => {
-    const { isAuth, setIsAuth } = props;
+    const { isAuth, setIsAuth, setAuthOutput } = props;
+    const token = localStorage.getItem("token");
+    const keycloakServices = new KeycloakServices();
+
+    const login = () => {
+        keycloakServices.login()
+    }
+    const logout = () => {
+        localStorage.clear();
+        keycloakServices.logout();
+    }
 
     return (
         <Navbar bg="primary" variant="dark">
@@ -14,12 +25,10 @@ const NavBar = (props) => {
                     <Nav.Link href="/">Главная</Nav.Link>
                 </Nav>
                 <Stack direction="row" spacing={2}>
-                    {isAuth ?
-                        <Link onClick={setIsAuth} className='link__nav' to={`/`}>Выйти</Link> :
+                        <Link onClick={logout} className='link__nav' to={`/`}>Выйти</Link> 
                         <>
-                        <Link className='link__nav' to={`/registration`}>Регистрация</Link>
-                        <Link className='link__nav' to={`/auth`}>Войти</Link>
-                        </>}
+                        <Link onClick={login} className='link__nav' to={`/`}>Войти</Link>
+                        </>
                 </Stack>
             </Container>
         </Navbar>

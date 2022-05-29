@@ -6,10 +6,7 @@ import JavaForallSevices from '../../services/javaForalServices';
 import Student from '../../pages/student';
 import Home from '../../pages/home';
 import ErrorMessage from '../error-message/error-message';
-import Registration from '../../pages/registration/registration';
-import Auth from '../../pages/auth/auth';
 import axios from 'axios';
-import { _BASE_URL_DATA } from '../../services/javaForalServices';
 import './app.css';
 
 const App = () => {
@@ -58,7 +55,7 @@ const App = () => {
         const deleteUser = () => {
             const options = {
                 method: 'DELETE',
-                url: `${_BASE_URL_DATA}/api/front/developer/${id}`,
+                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
                 mode: 'cors',
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -117,7 +114,7 @@ const App = () => {
         const addUser = () => {
             const options = {
                 method: 'POST',
-                url: `${_BASE_URL_DATA}/api/front/developer`,
+                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
                 mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8',
@@ -201,38 +198,28 @@ const App = () => {
     }
     const setAuthOutput = () => {
         setIsAuth(false);
-        localStorage.clear();
     }
 
     const qunUsers = users.length;
     const visibleData = filterPost(searchEmp(users, term), filter);
 
+    console.log(process.env);
+
     return (
         <div className="app">
-            <NavBar isAuth={isAuth} setIsAuth={() => setAuthOutput()} />
+            <NavBar isAuth={isAuth} setAuthOutput={() => setAuthOutput()} setIsAuth={() => setAuth()} />
+            <Home
+                onUpdateSearch={onUpdateSearch}
+                filter={filter}
+                onFilterSelect={onFilterSelect}
+                users={qunUsers}
+                data={visibleData}
+                onDelete={deleteItem}
+                onAdd={addItem}
+                isAuth={isAuth}
+            />
             <Routes>
-                <Route path="/" element={
-                    <Home
-                        onUpdateSearch={onUpdateSearch}
-                        filter={filter}
-                        onFilterSelect={onFilterSelect}
-                        users={qunUsers}
-                        data={visibleData}
-                        onDelete={deleteItem}
-                        onAdd={addItem}
-                        isAuth={isAuth}
-                    />
-                } />
-                <Route path="/student/:id" element={
-                    isAuth ? <Student isAuth={isAuth} /> : <Auth setIsAuth={() => { setAuth() }} />
-                } />
-                <Route path="/auth" element={
-                    <Auth setIsAuth={() => { setAuth() }} />
-                } />
-                <Route path="/registration" element={
-                    <Registration />
-                } />
-
+                <Route path="/student/:id" element={<Student isAuth={isAuth} />} />
             </Routes>
             <div className="error">
                 {isError ?

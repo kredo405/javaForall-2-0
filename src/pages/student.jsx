@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ErrorMessage from '../components/error-message/error-message';
-import { _BASE_URL_DATA } from '../services/javaForalServices';
 import { Spinner } from 'react-bootstrap';
 import JavaForallSevices from '../services/javaForalServices';
 import axios from 'axios';
@@ -30,7 +29,7 @@ const Student = (props) => {
         const getProfileInfo = () => {
             const options = {
                 method: 'GET',
-                url: `${_BASE_URL_DATA}/api/front/developer/${id}`,
+                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
                 mode: 'cors',
                 headers: {
                     'Authorization': `Bearer ${token}`

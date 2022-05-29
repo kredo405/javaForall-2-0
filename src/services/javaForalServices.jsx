@@ -1,8 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
 
-export const _BASE_URL_DATA = 'http://localhost:8080';
-export const _BASE_URL_AUTH = 'http://localhost:8181';
 
 class JavaForallSevices {
     getResource = async (url) => {
@@ -34,7 +32,7 @@ class JavaForallSevices {
 
         const options = {
             method: 'post',
-            url: `${_BASE_URL_AUTH}/auth/realms/template/protocol/openid-connect/token`,
+            url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth/realms/template/protocol/openid-connect/token`,
             headers: { 'content-type': 'application/x-www-form-urlencoded' },
             data: qs.stringify(data),
         }
@@ -52,15 +50,11 @@ class JavaForallSevices {
     }
 
     getAllUsers = () => {
-        return this.getResource(`${_BASE_URL_DATA}/api/front/developer`);
+        return this.getResource(`${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`);
     }
     refreshToken = (reqeust) => {
         return this.getToken(reqeust);
     }
 }
-
-
-
-
 
 export default JavaForallSevices;
