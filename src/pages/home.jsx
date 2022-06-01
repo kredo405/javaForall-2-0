@@ -5,6 +5,7 @@ import UsersList from '../components/users-list/users-list';
 import UsersAddForm from '../components/users-add-form/users-add-form';
 
 const Home = ({ onUpdateSearch, filter, onFilterSelect, users, data, onDelete, onToggleProp, onAdd, isAuth }) => {
+
     return (
         <div className='home'>
             <div className="search-panel">
@@ -21,7 +22,7 @@ const Home = ({ onUpdateSearch, filter, onFilterSelect, users, data, onDelete, o
                 isAuth={isAuth} />
             <UsersAddForm onAdd={onAdd} />
         </div>
-    )
+    );
 }
 
 export default Home

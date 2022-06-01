@@ -1,7 +1,21 @@
 .navbar {
     margin-bottom: 30px;
+   
 }
 .link__nav {
+    color: black;
+    text-decoration: none;
+    &:hover {
+        color: brown;
+    }
+}
+.btn-profile {
+    color: rgb(247, 247, 247);
+}
+.navbar__dropdown {
+    margin-bottom: 15px;
+}
+.link__nav_brand {
     color: white;
     text-decoration: none;
     &:hover {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { nanoid } from 'nanoid';
 import NavBar from '../navbar/navbar';
 import JavaForallSevices from '../../services/javaForalServices';
@@ -9,18 +9,16 @@ import ErrorMessage from '../error-message/error-message';
 import axios from 'axios';
 import './app.css';
 
-const App = () => {
+const App = (props) => {
 
     const [users, setUsers] = useState([]);
     const [term, setTerm] = useState('');
     const [filter, setFilter] = useState('all');
     const [isError, setIsError] = useState(false);
     const [error, setError] = useState('');
-    const [isAuth, setIsAuth] = useState(false);
 
-    let token = localStorage.getItem("token");
-    let expires = localStorage.getItem("expires_in");
-    const history = useNavigate();
+    let token = localStorage.getItem("react-token");
+  
 
     useEffect(() => {
         const javaForalServices = new JavaForallSevices();
@@ -45,14 +43,8 @@ const App = () => {
     }, []);
 
     const deleteItem = (id) => {
-        if (isAuth) {
             setUsers(users.filter(item => item.id !== id));
-        } else {
-            history('/auth');
-        }
 
-
-        const deleteUser = () => {
             const options = {
                 method: 'DELETE',
                 url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
@@ -77,14 +69,7 @@ const App = () => {
                         setError(error);
                     }
                 });
-        }
 
-        if (Date.now() < expires && isAuth) {
-            deleteUser();
-        } else if (isAuth && Date.now() >= expires) {
-            const javaForalServices = new JavaForallSevices();
-            javaForalServices.refreshToken(deleteUser);
-        }
     }
 
     const addItem = (firstName, lastName, patronymic, age, daysWorkList, experience, position, stack) => {
@@ -111,7 +96,9 @@ const App = () => {
             stack,
         }
 
-        const addUser = () => {
+        const newArr = [...users, newItem];
+        setUsers(newArr);
+
             const options = {
                 method: 'POST',
                 url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
@@ -138,20 +125,6 @@ const App = () => {
                         setError(error);
                     }
                 });
-        }
-
-        if (Date.now() < expires && isAuth) {
-            addUser();
-        } else if (isAuth && Date.now() >= expires) {
-            const javaForalServices = new JavaForallSevices();
-            javaForalServices.refreshToken(addUser);
-        }
-        if (isAuth) {
-            const newArr = [...users, newItem];
-            setUsers(newArr);
-        } else {
-            history('/auth');
-        }
     }
 
     const searchEmp = (items, term) => {
@@ -193,33 +166,26 @@ const App = () => {
         setFilter(filter);
     }
 
-    const setAuth = () => {
-        setIsAuth(true);
-    }
-    const setAuthOutput = () => {
-        setIsAuth(false);
-    }
-
     const qunUsers = users.length;
     const visibleData = filterPost(searchEmp(users, term), filter);
 
-    console.log(process.env);
-
     return (
         <div className="app">
-            <NavBar isAuth={isAuth} setAuthOutput={() => setAuthOutput()} setIsAuth={() => setAuth()} />
-            <Home
-                onUpdateSearch={onUpdateSearch}
-                filter={filter}
-                onFilterSelect={onFilterSelect}
-                users={qunUsers}
-                data={visibleData}
-                onDelete={deleteItem}
-                onAdd={addItem}
-                isAuth={isAuth}
-            />
+            <NavBar username={props.username}/>
             <Routes>
-                <Route path="/student/:id" element={<Student isAuth={isAuth} />} />
+            <Route path="/" element={<Navigate to="/" replace />} />
+                <Route path='/main' element={
+                    <Home
+                        onUpdateSearch={onUpdateSearch}
+                        filter={filter}
+                        onFilterSelect={onFilterSelect}
+                        users={qunUsers}
+                        data={visibleData}
+                        onDelete={deleteItem}
+                        onAdd={addItem}
+                    />
+                } />
+                <Route path="/student/:id" element={<Student />} />
             </Routes>
             <div className="error">
                 {isError ?
