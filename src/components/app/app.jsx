@@ -7,7 +7,52 @@ import Student from '../../pages/student';
 import Home from '../../pages/home';
 import ErrorMessage from '../error-message/error-message';
 import axios from 'axios';
+import Keycloak from 'keycloak-js';
 import './app.css';
+
+
+const authorization = () => {
+    const keycloak = new Keycloak({
+        realm: process.env.REACT_APP_REALM,
+        url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth/`,
+        clientId: process.env.REACT_APP_CLIENTID,
+    });
+
+    keycloak.init({ onLoad: 'login-required', checkLoginIframe: false })
+        .then((auth) => {
+            if (!auth) {
+                window.location.reload();
+            } else {
+                console.info("Authenticated");
+                localStorage.setItem("react-token", keycloak.token);
+                localStorage.setItem("react-refresh-token", keycloak.refreshToken);
+                keycloak.loadUserProfile()
+                    .then(function (profile) {
+                        console.log((profile))
+
+
+                    }).catch(function () {
+                        console.log('Failed to load user profile');
+                    });
+                setTimeout(() => {
+                    keycloak.updateToken(70).then((refreshed) => {
+                        if (refreshed) {
+                            console.debug('Token refreshed' + refreshed);
+                        } else {
+                            console.warn('Token not refreshed, valid for '
+                                + Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
+                        }
+                    }).catch((error) => {
+                        console.error('Failed to refresh token');
+                    });
+                }, 60000)
+            }
+        }).catch((error) => {
+            console.error("Authenticated Failed");
+        });
+}
+
+
 
 const App = (props) => {
 
@@ -16,11 +61,12 @@ const App = (props) => {
     const [filter, setFilter] = useState('all');
     const [isError, setIsError] = useState(false);
     const [error, setError] = useState('');
+    const [auth, setAuth] = useState(false);
+    const [profile, setProfile] = useState(null);
 
     let token = localStorage.getItem("react-token");
-  
 
-    useEffect(() => {
+    const getUsers = () => {
         const javaForalServices = new JavaForallSevices();
 
         javaForalServices
@@ -40,35 +86,44 @@ const App = (props) => {
                     setError(error);
                 }
             });
+    }
+
+    useEffect(() => {
+        getUsers();
     }, []);
 
     const deleteItem = (id) => {
-            setUsers(users.filter(item => item.id !== id));
+        setUsers(users.filter(item => item.id !== id));
 
-            const options = {
-                method: 'DELETE',
-                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
-                mode: 'cors',
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Authorization': `Bearer ${token}`
+        const options = {
+            method: 'DELETE',
+            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
+            mode: 'cors',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token}`
+            }
+        };
+        axios
+            .request(options)
+            .then((response) => {
+                console.log(response);
+                getUsers();
+            })
+            .catch((error) => {
+                console.error(error);
+                getUsers();
+                if (error.response.status === 401) {
+                    authorization();
                 }
-            };
-            axios
-                .request(options)
-                .then((response) => {
-                    console.log(response);
-                })
-                .catch((error) => {
-                    console.error(error);
-                    if (error.response.data !== undefined && error.response.data !== '') {
-                        setIsError(true);
-                        setError(error.response.data);
-                    } else {
-                        setIsError(true);
-                        setError(error);
-                    }
-                });
+                if (error.response.data !== undefined && error.response.data !== '') {
+                    setIsError(true);
+                    setError(error.response.data);
+                } else {
+                    setIsError(true);
+                    setError(error);
+                }
+            });
 
     }
 
@@ -99,32 +154,37 @@ const App = (props) => {
         const newArr = [...users, newItem];
         setUsers(newArr);
 
-            const options = {
-                method: 'POST',
-                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8',
-                    'Access-Control-Allow-Origin': '*',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(body),
-            };
-            axios
-                .request(options)
-                .then(function (response) {
-                    console.log(response);
-                })
-                .catch((error) => {
-                    console.error(error);
-                    if (error.response.data !== undefined && error.response.data !== '') {
-                        setIsError(true);
-                        setError(error.response.data);
-                    } else {
-                        setIsError(true);
-                        setError(error);
-                    }
-                });
+        const options = {
+            method: 'POST',
+            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'Access-Control-Allow-Origin': '*',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(body),
+        };
+        axios
+            .request(options)
+            .then(function (response) {
+                console.log(response);
+                getUsers();
+            })
+            .catch((error) => {
+                console.error(error);
+                getUsers();
+                if (error.response.status === 401) {
+                    authorization();
+                }
+                if (error.response.data !== undefined && error.response.data !== '') {
+                    setIsError(true);
+                    setError(error.response.data);
+                } else {
+                    setIsError(true);
+                    setError(error);
+                }
+            });
     }
 
     const searchEmp = (items, term) => {
@@ -171,9 +231,9 @@ const App = (props) => {
 
     return (
         <div className="app">
-            <NavBar username={props.username}/>
+            <NavBar profile={profile} />
             <Routes>
-            <Route path="/" element={<Navigate to="/" replace />} />
+                <Route path="/" element={<Navigate to="/main" replace />} />
                 <Route path='/main' element={
                     <Home
                         onUpdateSearch={onUpdateSearch}
@@ -185,7 +245,9 @@ const App = (props) => {
                         onAdd={addItem}
                     />
                 } />
-                <Route path="/student/:id" element={<Student />} />
+                <Route path="/main/student/:id" element={
+                    <Student auth={auth} setAuth={() => setAuth()} setProfile={() => setProfile()}
+                    />} />
             </Routes>
             <div className="error">
                 {isError ?

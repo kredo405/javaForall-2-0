@@ -15,13 +15,13 @@ const NavBar = (props) => {
     return (
         <Navbar bg="primary" variant="dark">
             <Container>
-                <Navbar.Brand href="/main"><Link className='link__nav_brand' to={`/main`}>JavaForall</Link></Navbar.Brand>
+                <Navbar.Brand><Link className='link__nav_brand' to={`/main`}>JavaForall</Link></Navbar.Brand>
                 <Nav className="me-auto">
-                    <Nav.Link href="/">Главная</Nav.Link>
+                    <Nav.Link><Link to='/main'>Главная</Link></Nav.Link>
                 </Nav>
                 <Stack direction="row" spacing={2}>
                     <div className="navbar__dropdown">
-                        <DropdownButton id="dropdown-basic-button" title={props.username}>
+                        <DropdownButton id="dropdown-basic-button" title={props.profile}>
                             <Dropdown.Item>
                                 <Link onClick={logout} className='link__nav' to={`/main`}>Выйти</Link>
                             </Dropdown.Item>
