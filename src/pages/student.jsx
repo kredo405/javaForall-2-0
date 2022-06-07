@@ -8,10 +8,12 @@ import avatar from './photo.jpg';
 import './student.scss';
 import Keycloak from 'keycloak-js';
 
-const authorization = () => {
+const authorization = (id, setFirstName, setLastName, setPatronymic, setAge, setPosition,
+    setStack, setDay, setIsLoaded, setLoading, setError) => {
+
     const keycloak = new Keycloak({
         realm: process.env.REACT_APP_REALM,
-        url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth/`,
+        url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth`,
         clientId: process.env.REACT_APP_CLIENTID,
     });
 
@@ -26,7 +28,39 @@ const authorization = () => {
                 keycloak.loadUserProfile()
                     .then(function (profile) {
                         console.log((profile))
+                        localStorage.setItem('user', profile.username);
+                        let token = localStorage.getItem("react-token");
 
+                        const options = {
+                            method: 'GET',
+                            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
+                            mode: 'cors',
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            },
+                        };
+                        axios
+                            .request(options)
+                            .then(function (response) {
+                                console.log(response);
+                                setFirstName(response.data.firstName);
+                                setLastName(response.data.lastName);
+                                setPatronymic(response.data.patronymic);
+                                setAge(response.data.age);
+                                setPosition(response.data.position);
+                                setStack(response.data.stack);
+                                setDay(response.data.daysWorkList);
+                                setIsLoaded(true);
+                                setLoading(false);
+                            })
+                            .catch(function (error) {
+                                console.error(error);
+                                if (error.response.data !== undefined && error.response.data !== '') {
+                                    setError(error.response.data);
+                                    setIsLoaded(false);
+                                    setLoading(true);
+                                }
+                            });
 
                     }).catch(function () {
                         console.log('Failed to load user profile');
@@ -63,48 +97,45 @@ const Student = (props) => {
     const [loading, setLoading] = useState(true);
 
     const { id } = useParams();
-    const { auth, setAuth, setProfile } = props;
     let token = localStorage.getItem("react-token");
 
     useEffect(() => {
-        const options = {
-            method: 'GET',
-            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
-            mode: 'cors',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            },
-        };
-        axios
-            .request(options)
-            .then(function (response) {
-                console.log(response);
-                setFirstName(response.firstName);
-                setLastName(response.lastName);
-                setPatronymic(response.patronymic);
-                setAge(response.age);
-                setPosition(response.position);
-                setStack(response.stack);
-                setDay(response.daysWorkList);
-                setIsLoaded(true);
-                setLoading(false);
-            })
-            .catch(function (error) {
-                console.error(error);
-                if (error.response.status === 401) {
-                    authorization();
-                }
-                if (error.response.data !== undefined && error.response.data !== '') {
-                    setError(error.response.data);
-                    setIsLoaded(false);
-                    setLoading(true);
-                } else {
-                    setError(error);
-                    setIsLoaded(false);
-                    setLoading(true);
-                }
-            });
-    }, [token]);
+        if (!token) {
+            authorization(id, setFirstName, setLastName, setPatronymic, setAge, setPosition,
+                setStack, setDay, setIsLoaded, setLoading, setError);
+        } else {
+            const options = {
+                method: 'GET',
+                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
+                mode: 'cors',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+            };
+            axios
+                .request(options)
+                .then(function (response) {
+                    console.log(response);
+                    setFirstName(response.data.firstName);
+                    setLastName(response.data.lastName);
+                    setPatronymic(response.data.patronymic);
+                    setAge(response.data.age);
+                    setPosition(response.data.position);
+                    setStack(response.data.stack);
+                    setDay(response.data.daysWorkList);
+                    setIsLoaded(true);
+                    setLoading(false);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    if (error.response.data !== undefined && error.response.data !== '') {
+                        setError(error.response.data);
+                        setIsLoaded(false);
+                        setLoading(true);
+                    }
+                });
+        }
+    }, [id, token]);
 
     if (loading) {
         return (
@@ -164,10 +195,6 @@ const Student = (props) => {
             </div>
         )
     }
-
-
-
-
 }
 
 export default Student

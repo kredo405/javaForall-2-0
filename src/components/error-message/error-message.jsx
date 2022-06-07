@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import {Alert, AlertTitle, Stack, IconButton, Collapse, Button} from '@mui/material';
+import {Alert, AlertTitle, Stack, IconButton, Collapse} from '@mui/material';
 import './erorr-message.scss';
 
 const ErrorMessage = (props) => {
     const [open, setOpen] = useState(true);
-    const setIsError = () => {
-        props.setError();
-    }
+    // const setIsError = () => {
+    //     props.setError();
+    // }
 
     return (
         <div className='error'>

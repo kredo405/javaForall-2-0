@@ -11,10 +11,10 @@ import Keycloak from 'keycloak-js';
 import './app.css';
 
 
-const authorization = () => {
+const authorization = (id, method, func, body, setIsError, setError) => {
     const keycloak = new Keycloak({
         realm: process.env.REACT_APP_REALM,
-        url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth/`,
+        url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth`,
         clientId: process.env.REACT_APP_CLIENTID,
     });
 
@@ -29,7 +29,47 @@ const authorization = () => {
                 keycloak.loadUserProfile()
                     .then(function (profile) {
                         console.log((profile))
+                        localStorage.setItem('user', profile.username);
+                        let token = localStorage.getItem("react-token");
+                        let options;
 
+                        if (method === 'DELETE') {
+                            options = {
+                                method: 'DELETE',
+                                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
+                                mode: 'cors',
+                                headers: {
+                                    // 'Access-Control-Allow-Origin': '*',
+                                    'Authorization': `Bearer ${token}`
+                                }
+                            }
+                        } else if (method === 'POST') {
+                            options = {
+                                method: 'POST',
+                                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
+                                mode: 'cors',
+                                headers: {
+                                    'Content-Type': 'application/json;charset=utf-8',
+                                    // 'Access-Control-Allow-Origin': '*',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify(body),
+                            };
+                        }
+                        axios
+                            .request(options)
+                            .then((response) => {
+                                console.log(response);
+                                func();
+                            })
+                            .catch((error) => {
+                                console.error(error);
+                                func();
+                                if (error.response.data !== undefined && error.response.data !== '') {
+                                    setIsError(true);
+                                    setError(error.response.data);
+                                }
+                            });
 
                     }).catch(function () {
                         console.log('Failed to load user profile');
@@ -52,8 +92,6 @@ const authorization = () => {
         });
 }
 
-
-
 const App = (props) => {
 
     const [users, setUsers] = useState([]);
@@ -62,9 +100,8 @@ const App = (props) => {
     const [isError, setIsError] = useState(false);
     const [error, setError] = useState('');
     const [auth, setAuth] = useState(false);
-    const [profile, setProfile] = useState(null);
-
     let token = localStorage.getItem("react-token");
+
 
     const getUsers = () => {
         const javaForalServices = new JavaForallSevices();
@@ -94,40 +131,37 @@ const App = (props) => {
 
     const deleteItem = (id) => {
         setUsers(users.filter(item => item.id !== id));
-
-        const options = {
-            method: 'DELETE',
-            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
-            mode: 'cors',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Authorization': `Bearer ${token}`
+        if (!token) {
+            authorization(id, 'DELETE', getUsers, null, setIsError, setError);
+        } else {
+            const options = {
+                method: 'DELETE',
+                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
+                mode: 'cors',
+                headers: {
+                    // 'Access-Control-Allow-Origin': '*',
+                    'Authorization': `Bearer ${token}`
+                }
             }
-        };
-        axios
-            .request(options)
-            .then((response) => {
-                console.log(response);
-                getUsers();
-            })
-            .catch((error) => {
-                console.error(error);
-                getUsers();
-                if (error.response.status === 401) {
-                    authorization();
-                }
-                if (error.response.data !== undefined && error.response.data !== '') {
-                    setIsError(true);
-                    setError(error.response.data);
-                } else {
-                    setIsError(true);
-                    setError(error);
-                }
-            });
-
+            axios
+                .request(options)
+                .then((response) => {
+                    console.log(response);
+                    getUsers();
+                })
+                .catch((error) => {
+                    console.error(error);
+                    getUsers();
+                    if (error.response.data !== undefined && error.response.data !== '') {
+                        setIsError(true);
+                        setError(error.response.data);
+                    }
+                });
+        }
     }
 
     const addItem = (firstName, lastName, patronymic, age, daysWorkList, experience, position, stack) => {
+
         const randomId = nanoid()
         const newItem = {
             age,
@@ -154,37 +188,35 @@ const App = (props) => {
         const newArr = [...users, newItem];
         setUsers(newArr);
 
-        const options = {
-            method: 'POST',
-            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'Access-Control-Allow-Origin': '*',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify(body),
-        };
-        axios
-            .request(options)
-            .then(function (response) {
-                console.log(response);
-                getUsers();
-            })
-            .catch((error) => {
-                console.error(error);
-                getUsers();
-                if (error.response.status === 401) {
-                    authorization();
-                }
-                if (error.response.data !== undefined && error.response.data !== '') {
-                    setIsError(true);
-                    setError(error.response.data);
-                } else {
-                    setIsError(true);
-                    setError(error);
-                }
-            });
+        if (!token) {
+            authorization(null, 'POST', getUsers, body, setIsError, setError);
+        } else {
+            const options = {
+                method: 'POST',
+                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                    // 'Access-Control-Allow-Origin': '*',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(body),
+            }
+            axios
+                .request(options)
+                .then((response) => {
+                    console.log(response);
+                    getUsers();
+                })
+                .catch((error) => {
+                    console.error(error);
+                    getUsers();
+                    if (error.response.data !== undefined && error.response.data !== '') {
+                        setIsError(true);
+                        setError(error.response.data);
+                    }
+                });
+        }
     }
 
     const searchEmp = (items, term) => {
@@ -231,7 +263,7 @@ const App = (props) => {
 
     return (
         <div className="app">
-            <NavBar profile={profile} />
+            <NavBar />
             <Routes>
                 <Route path="/" element={<Navigate to="/main" replace />} />
                 <Route path='/main' element={
@@ -246,8 +278,7 @@ const App = (props) => {
                     />
                 } />
                 <Route path="/main/student/:id" element={
-                    <Student auth={auth} setAuth={() => setAuth()} setProfile={() => setProfile()}
-                    />} />
+                    <Student auth={auth} setAuth={() => setAuth()} />} />
             </Routes>
             <div className="error">
                 {isError ?

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import qs from 'qs';
-
 
 class JavaForallSevices {
     getResource = async (url) => {
@@ -11,7 +9,7 @@ class JavaForallSevices {
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
-                'Access-Control-Allow-Origin': '*',
+                // 'Access-Control-Allow-Origin': '*',
             },
         };
 
