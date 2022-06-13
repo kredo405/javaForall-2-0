@@ -169,8 +169,8 @@ const App = (props) => {
                 mode: 'cors',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8',
-                    // 'Access-Control-Allow-Origin': '*',
-                    'Authorization': `Bearer ${token}`
+                    'Access-Control-Allow-Origin': '*',
+                    // 'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(body),
             }

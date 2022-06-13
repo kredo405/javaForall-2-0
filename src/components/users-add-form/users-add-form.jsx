@@ -121,13 +121,13 @@ class UsersAddForm extends Component {
                         name="patronymic"
                         value={patronymic}
                         onChange={this.onValueChange} />
-                    <input type="number"
+                    <input type="text"
                         className="form-control new-post-label"
                         placeholder="Опыт"
                         name="experience"
                         value={experience}
                         onChange={this.onValueChange} />
-                    <input type="number"
+                    <input type="text"
                         className="form-control new-post-label"
                         placeholder="Возвраст"
                         name="age"
