@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import './users-add-form.scss';
+import axios from 'axios';
 
 class UsersAddForm extends Component {
     constructor(props) {
@@ -71,6 +72,46 @@ class UsersAddForm extends Component {
         this.props.onAdd(this.state.firstName, this.state.lastName, this.state.patronymic,
             this.state.age, this.state.daysWorkList, this.state.experience,
             this.state.position, this.state.stack);
+
+            const body = {
+                age: this.state.age,
+                daysWorkList: this.state.daysWorkList,
+                experience: this.state.experience,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                patronymic: this.state.patronymic,
+                position: this.state.position,
+                stack: this.state.stack,
+            }
+    
+                const options = {
+                    method: 'POST',
+                    url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8',
+                        // 'Access-Control-Allow-Origin': '*',
+                        // 'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body),
+                }
+                axios
+                    .request(options)
+                    .then((response) => {
+                        console.log(response);
+                        // getUsers();
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        // getUsers();
+                        if (error.response.data !== undefined && error.response.data !== '') {
+                            // setIsError(true);
+                            // setError(error.response.data);
+                        } else {
+                            // setIsError(true);
+                            // setError(error);
+                        }
+                    });
 
         this.setState({
             firstName: '',

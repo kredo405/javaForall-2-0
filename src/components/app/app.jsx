@@ -146,48 +146,9 @@ const App = (props) => {
             stack,
             id: randomId,
         }
-        const body = {
-            age,
-            daysWorkList,
-            experience,
-            firstName,
-            lastName,
-            patronymic,
-            position,
-            stack,
-        }
 
         const newArr = [...users, newItem];
-        setUsers(newArr);
-
-            const options = {
-                method: 'POST',
-                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8',
-                    'Access-Control-Allow-Origin': '*',
-                    // 'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(body),
-            }
-            axios
-                .request(options)
-                .then((response) => {
-                    console.log(response);
-                    getUsers();
-                })
-                .catch((error) => {
-                    console.error(error);
-                    getUsers();
-                    if (error.response.data !== undefined && error.response.data !== '') {
-                        setIsError(true);
-                        setError(error.response.data);
-                    } else {
-                        setIsError(true);
-                        setError(error);
-                    }
-                });
+        setUsers(newArr);  
     }
 
     const searchEmp = (items, term) => {
