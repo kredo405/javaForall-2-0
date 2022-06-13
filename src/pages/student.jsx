@@ -8,8 +8,7 @@ import avatar from './photo.jpg';
 import './student.scss';
 import Keycloak from 'keycloak-js';
 
-const authorization = (id, setFirstName, setLastName, setPatronymic, setAge, setPosition,
-    setStack, setDay, setIsLoaded, setLoading, setError) => {
+const authorization = (setAuth) => {
 
     const keycloak = new Keycloak({
         realm: process.env.REACT_APP_REALM,
@@ -17,51 +16,20 @@ const authorization = (id, setFirstName, setLastName, setPatronymic, setAge, set
         clientId: process.env.REACT_APP_CLIENTID,
     });
 
+
     keycloak.init({ onLoad: 'login-required', checkLoginIframe: false })
         .then((auth) => {
             if (!auth) {
                 window.location.reload();
             } else {
                 console.info("Authenticated");
-                localStorage.setItem("react-token", keycloak.token);
-                localStorage.setItem("react-refresh-token", keycloak.refreshToken);
+
                 keycloak.loadUserProfile()
                     .then(function (profile) {
                         console.log((profile))
                         localStorage.setItem('user', profile.username);
-                        let token = localStorage.getItem("react-token");
-
-                        const options = {
-                            method: 'GET',
-                            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
-                            mode: 'cors',
-                            headers: {
-                                'Authorization': `Bearer ${token}`
-                            },
-                        };
-                        axios
-                            .request(options)
-                            .then(function (response) {
-                                console.log(response);
-                                setFirstName(response.data.firstName);
-                                setLastName(response.data.lastName);
-                                setPatronymic(response.data.patronymic);
-                                setAge(response.data.age);
-                                setPosition(response.data.position);
-                                setStack(response.data.stack);
-                                setDay(response.data.daysWorkList);
-                                setIsLoaded(true);
-                                setLoading(false);
-                            })
-                            .catch(function (error) {
-                                console.error(error);
-                                if (error.response.data !== undefined && error.response.data !== '') {
-                                    setError(error.response.data);
-                                    setIsLoaded(false);
-                                    setLoading(true);
-                                }
-                            });
-
+                        localStorage.setItem("react-token", keycloak.token);
+                        localStorage.setItem("react-refresh-token", keycloak.refreshToken);
                     }).catch(function () {
                         console.log('Failed to load user profile');
                     });
@@ -77,6 +45,8 @@ const authorization = (id, setFirstName, setLastName, setPatronymic, setAge, set
                         console.error('Failed to refresh token');
                     });
                 }, 60000)
+
+                return keycloak
             }
         }).catch((error) => {
             console.error("Authenticated Failed");
@@ -100,42 +70,41 @@ const Student = (props) => {
     let token = localStorage.getItem("react-token");
 
     useEffect(() => {
-        if (!token) {
-            authorization(id, setFirstName, setLastName, setPatronymic, setAge, setPosition,
-                setStack, setDay, setIsLoaded, setLoading, setError);
-        } else {
-            const options = {
-                method: 'GET',
-                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
-                mode: 'cors',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-            };
-            axios
-                .request(options)
-                .then(function (response) {
-                    console.log(response);
-                    setFirstName(response.data.firstName);
-                    setLastName(response.data.lastName);
-                    setPatronymic(response.data.patronymic);
-                    setAge(response.data.age);
-                    setPosition(response.data.position);
-                    setStack(response.data.stack);
-                    setDay(response.data.daysWorkList);
-                    setIsLoaded(true);
-                    setLoading(false);
-                })
-                .catch(function (error) {
-                    console.error(error);
-                    if (error.response.data !== undefined && error.response.data !== '') {
-                        setError(error.response.data);
-                        setIsLoaded(false);
-                        setLoading(true);
-                    }
-                });
-        }
-    }, [id, token]);
+
+        const options = {
+            method: 'GET',
+            url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        };
+        axios
+            .request(options)
+            .then(function (response) {
+                console.log(response);
+                setFirstName(response.data.firstName);
+                setLastName(response.data.lastName);
+                setPatronymic(response.data.patronymic);
+                setAge(response.data.age);
+                setPosition(response.data.position);
+                setStack(response.data.stack);
+                setDay(response.data.daysWorkList);
+                setIsLoaded(true);
+                setLoading(false);
+            })
+            .catch(function (error) {
+                console.error(error);
+                if (error.response.data !== undefined && error.response.data !== '') {
+                    setError(error.response.data);
+                    setIsLoaded(false);
+                    setLoading(true);
+                } else {
+                    setError(error);
+                }
+            });
+
+    }, [id]);
 
     if (loading) {
         return (
@@ -146,7 +115,6 @@ const Student = (props) => {
                 <div className="profile__error">
                     <ErrorMessage setError={() => setIsLoaded(true)} error={error} />
                 </div>
-
             </div>
 
         )

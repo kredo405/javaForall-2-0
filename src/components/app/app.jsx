@@ -11,7 +11,7 @@ import Keycloak from 'keycloak-js';
 import './app.css';
 
 
-const authorization = (id, method, func, body, setIsError, setError) => {
+const authorization = (setUser) => {
     const keycloak = new Keycloak({
         realm: process.env.REACT_APP_REALM,
         url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth`,
@@ -30,47 +30,7 @@ const authorization = (id, method, func, body, setIsError, setError) => {
                     .then(function (profile) {
                         console.log((profile))
                         localStorage.setItem('user', profile.username);
-                        let token = localStorage.getItem("react-token");
-                        let options;
-
-                        if (method === 'DELETE') {
-                            options = {
-                                method: 'DELETE',
-                                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
-                                mode: 'cors',
-                                headers: {
-                                    // 'Access-Control-Allow-Origin': '*',
-                                    'Authorization': `Bearer ${token}`
-                                }
-                            }
-                        } else if (method === 'POST') {
-                            options = {
-                                method: 'POST',
-                                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
-                                mode: 'cors',
-                                headers: {
-                                    'Content-Type': 'application/json;charset=utf-8',
-                                    // 'Access-Control-Allow-Origin': '*',
-                                    'Authorization': `Bearer ${token}`
-                                },
-                                body: JSON.stringify(body),
-                            };
-                        }
-                        axios
-                            .request(options)
-                            .then((response) => {
-                                console.log(response);
-                                func();
-                            })
-                            .catch((error) => {
-                                console.error(error);
-                                func();
-                                if (error.response.data !== undefined && error.response.data !== '') {
-                                    setIsError(true);
-                                    setError(error.response.data);
-                                }
-                            });
-
+                        setUser(profile.username);
                     }).catch(function () {
                         console.log('Failed to load user profile');
                     });
@@ -100,7 +60,10 @@ const App = (props) => {
     const [isError, setIsError] = useState(false);
     const [error, setError] = useState('');
     const [auth, setAuth] = useState(false);
+    const [user, setUser] = useState('');
+
     let token = localStorage.getItem("react-token");
+    let session = localStorage.key(0);
 
 
     const getUsers = () => {
@@ -128,11 +91,17 @@ const App = (props) => {
     useEffect(() => {
         getUsers();
     }, []);
+    useEffect(() => {
+        if(!token && session) {
+            authorization(setUser);
+        }
+    });
+    
 
     const deleteItem = (id) => {
         setUsers(users.filter(item => item.id !== id));
         if (!token) {
-            authorization(id, 'DELETE', getUsers, null, setIsError, setError);
+            authorization();
         } else {
             const options = {
                 method: 'DELETE',
@@ -155,6 +124,9 @@ const App = (props) => {
                     if (error.response.data !== undefined && error.response.data !== '') {
                         setIsError(true);
                         setError(error.response.data);
+                    }else {
+                        setIsError(true);
+                        setError(error);
                     }
                 });
         }
@@ -189,7 +161,7 @@ const App = (props) => {
         setUsers(newArr);
 
         if (!token) {
-            authorization(null, 'POST', getUsers, body, setIsError, setError);
+            authorization();
         } else {
             const options = {
                 method: 'POST',
@@ -214,6 +186,9 @@ const App = (props) => {
                     if (error.response.data !== undefined && error.response.data !== '') {
                         setIsError(true);
                         setError(error.response.data);
+                    } else {
+                        setIsError(true);
+                        setError(error);
                     }
                 });
         }
@@ -263,7 +238,7 @@ const App = (props) => {
 
     return (
         <div className="app">
-            <NavBar />
+            <NavBar user={user} />
             <Routes>
                 <Route path="/" element={<Navigate to="/main" replace />} />
                 <Route path='/main' element={
@@ -278,7 +253,7 @@ const App = (props) => {
                     />
                 } />
                 <Route path="/main/student/:id" element={
-                    <Student auth={auth} setAuth={() => setAuth()} />} />
+                    <Student auth={auth} setAuth={() => setAuth()} setUser={(user) => setUser()}/>} />
             </Routes>
             <div className="error">
                 {isError ?

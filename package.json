@@ -23,6 +23,7 @@
     "nanoid": "^3.3.4",
     "react": "^18.1.0",
     "react-bootstrap": "^2.3.1",
+    "react-bootstrap-icons": "^1.8.2",
     "react-dom": "^18.1.0",
     "react-id-generator": "^3.0.2",
     "react-jwt": "^1.1.6",

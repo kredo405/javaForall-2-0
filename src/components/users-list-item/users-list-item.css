@@ -8,6 +8,12 @@
 }
 .link {
     text-decoration: none;
+    
+}
+button.link {
+    display: flex;
+    justify-content: flex-start;
+    color: cornflowerblue;
 }
 
 .list-group-item span {
