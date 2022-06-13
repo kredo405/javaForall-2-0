@@ -160,9 +160,6 @@ const App = (props) => {
         const newArr = [...users, newItem];
         setUsers(newArr);
 
-        if (!token) {
-            authorization();
-        } else {
             const options = {
                 method: 'POST',
                 url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
@@ -191,7 +188,6 @@ const App = (props) => {
                         setError(error);
                     }
                 });
-        }
     }
 
     const searchEmp = (items, term) => {
