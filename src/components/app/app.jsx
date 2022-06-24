@@ -1,58 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { nanoid } from 'nanoid';
+import { useSelector } from "react-redux";
 import NavBar from '../navbar/navbar';
 import JavaForallSevices from '../../services/javaForalServices';
+import RefreshToken from '../../services/keycloakServices';
 import Student from '../../pages/student';
 import Home from '../../pages/home';
 import ErrorMessage from '../error-message/error-message';
+import Auth from '../../pages/auth/auth';
+import Registration from '../../pages/registration/registration';
 import axios from 'axios';
-import Keycloak from 'keycloak-js';
 import './app.css';
 
-
-const authorization = (setUser) => {
-    const keycloak = new Keycloak({
-        realm: process.env.REACT_APP_REALM,
-        url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth`,
-        clientId: process.env.REACT_APP_CLIENTID,
-    });
-
-    keycloak.init({ onLoad: 'login-required', checkLoginIframe: false })
-        .then((auth) => {
-            if (!auth) {
-                window.location.reload();
-            } else {
-                console.info("Authenticated");
-                localStorage.setItem("react-token", keycloak.token);
-                localStorage.setItem("react-refresh-token", keycloak.refreshToken);
-                keycloak.loadUserProfile()
-                    .then(function (profile) {
-                        console.log((profile))
-                        localStorage.setItem('user', profile.username);
-                        setUser(profile.username);
-                    }).catch(function () {
-                        console.log('Failed to load user profile');
-                    });
-                setTimeout(() => {
-                    keycloak.updateToken(70).then((refreshed) => {
-                        if (refreshed) {
-                            console.debug('Token refreshed' + refreshed);
-                        } else {
-                            console.warn('Token not refreshed, valid for '
-                                + Math.round(keycloak.tokenParsed.exp + keycloak.timeSkew - new Date().getTime() / 1000) + ' seconds');
-                        }
-                    }).catch((error) => {
-                        console.error('Failed to refresh token');
-                    });
-                }, 60000)
-            }
-        }).catch((error) => {
-            console.error("Authenticated Failed");
-        });
-}
-
-const App = (props) => {
+const App = () => {
 
     const [users, setUsers] = useState([]);
     const [term, setTerm] = useState('');
@@ -61,13 +22,12 @@ const App = (props) => {
     const [error, setError] = useState('');
     const [auth, setAuth] = useState(false);
     const [user, setUser] = useState('');
-
-    let token = localStorage.getItem("react-token");
-    let session = localStorage.key(0);
+    const { token, isAuth } = useSelector(state => state);
+    const history = useNavigate();
+    const javaForalServices = new JavaForallSevices();
 
 
     const getUsers = () => {
-        const javaForalServices = new JavaForallSevices();
 
         javaForalServices
             .getAllUsers()
@@ -91,44 +51,40 @@ const App = (props) => {
     useEffect(() => {
         getUsers();
     }, []);
-    useEffect(() => {
-        if(!token && session) {
-            authorization(setUser);
-        }
-    });
-    
 
     const deleteItem = (id) => {
         setUsers(users.filter(item => item.id !== id));
-        if (!token) {
-            authorization();
+        if (!isAuth) {
+            history('/main/auth');
         } else {
-            const options = {
-                method: 'DELETE',
-                url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
-                mode: 'cors',
-                headers: {
-                    // 'Access-Control-Allow-Origin': '*',
-                    'Authorization': `Bearer ${token}`
-                }
-            }
-            axios
-                .request(options)
-                .then((response) => {
-                    console.log(response);
-                    getUsers();
-                })
-                .catch((error) => {
-                    console.error(error);
-                    getUsers();
-                    if (error.response.data !== undefined && error.response.data !== '') {
-                        setIsError(true);
-                        setError(error.response.data);
-                    }else {
-                        setIsError(true);
-                        setError(error);
+            if (Date.now() >= token.expires_in) {
+                RefreshToken(deleteItem);
+            } else {
+                const options = {
+                    method: 'DELETE',
+                    url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
+                    headers: {
+                        'Authorization': `Bearer ${token}`
                     }
-                });
+                }
+                axios
+                    .request(options)
+                    .then((response) => {
+                        console.log(response);
+                        getUsers();
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        getUsers();
+                        if (error.response.data !== undefined && error.response.data !== '') {
+                            setIsError(true);
+                            setError(error.response.data);
+                        } else {
+                            setIsError(true);
+                            setError(error);
+                        }
+                    });
+            }
         }
     }
 
@@ -148,7 +104,7 @@ const App = (props) => {
         }
 
         const newArr = [...users, newItem];
-        setUsers(newArr);  
+        setUsers(newArr);
     }
 
     const searchEmp = (items, term) => {
@@ -210,7 +166,11 @@ const App = (props) => {
                     />
                 } />
                 <Route path="/main/student/:id" element={
-                    <Student auth={auth} setAuth={() => setAuth()} setUser={(user) => setUser()}/>} />
+                    <Student auth={auth} setAuth={() => setAuth()} setUser={(user) => setUser()} />} />
+                <Route path="/main/auth" element={
+                    <Auth />} />
+                <Route path="/main/registration" element={
+                    <Registration />} />
             </Routes>
             <div className="error">
                 {isError ?

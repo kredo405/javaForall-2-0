@@ -87,10 +87,8 @@ class UsersAddForm extends Component {
                 const options = {
                     method: 'POST',
                     url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
-                    mode: 'cors',
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8',
-                        // 'Access-Control-Allow-Origin': '*',
                         // 'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(body),
@@ -162,13 +160,13 @@ class UsersAddForm extends Component {
                         name="patronymic"
                         value={patronymic}
                         onChange={this.onValueChange} />
-                    <input type="text"
+                    <input type="number"
                         className="form-control new-post-label"
                         placeholder="Опыт"
                         name="experience"
                         value={experience}
                         onChange={this.onValueChange} />
-                    <input type="text"
+                    <input type="number"
                         className="form-control new-post-label"
                         placeholder="Возвраст"
                         name="age"

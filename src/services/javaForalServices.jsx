@@ -9,7 +9,6 @@ class JavaForallSevices {
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8',
-                // 'Access-Control-Allow-Origin': '*',
             },
         };
 
@@ -20,9 +19,6 @@ class JavaForallSevices {
 
     getAllUsers = () => {
         return this.getResource(`${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`);
-    }
-    refreshToken = (reqeust) => {
-        return this.getToken(reqeust);
     }
 }
 
