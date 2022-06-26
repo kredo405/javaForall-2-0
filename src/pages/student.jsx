@@ -28,9 +28,9 @@ const Student = () => {
 
     const getInfo = () => {
         if(isAuth) {
-            if(Date.now() >= token.expires_in) {
-                RefreshToken(getInfo);
-            } else {
+            // if(Date.now() >= token.expires_in) {
+            //     // RefreshToken(getInfo);
+            // } else {
                 const options = {
                     method: 'GET',
                     url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
@@ -62,9 +62,9 @@ const Student = () => {
                             setError(error);
                         }
                     });
-            }
+            // }
             
-        }  else {
+        } else {
             history('/main/auth');
         }
     }

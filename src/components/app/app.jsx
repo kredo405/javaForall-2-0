@@ -57,9 +57,9 @@ const App = () => {
         if (!isAuth) {
             history('/main/auth');
         } else {
-            if (Date.now() >= token.expires_in) {
-                RefreshToken(deleteItem);
-            } else {
+            // if (Date.now() >= token.expires_in) {
+            //     RefreshToken(deleteItem);
+            // } else {
                 const options = {
                     method: 'DELETE',
                     url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
@@ -84,7 +84,7 @@ const App = () => {
                             setError(error);
                         }
                     });
-            }
+            // }
         }
     }
 
