@@ -64,7 +64,7 @@ const App = () => {
                     method: 'DELETE',
                     url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
                     headers: {
-                        'Authorization': `Bearer ${token}`
+                        'Authorization': `Bearer ${token.token}`
                     }
                 }
                 axios
