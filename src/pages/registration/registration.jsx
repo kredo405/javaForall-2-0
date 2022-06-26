@@ -58,7 +58,7 @@ const Registration = (props) => {
         }
         const body = {
             client_id: encodeURIComponent('admin-cli'),
-            client_secret: encodeURIComponent('ie9vyhnqQ9tE5RutjCtE0FA127qnURWF'),
+            client_secret: encodeURIComponent(process.env.REACT_APP_CLIENT_SECRET_ADMIN),
             grant_type: encodeURIComponent('client_credentials')
         }
         const data = Object.keys(body)
@@ -67,7 +67,7 @@ const Registration = (props) => {
 
         const options = {
             method: 'POST',
-            url: 'http://localhost:8181/auth/realms/master/protocol/openid-connect/token',
+            url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth/realms/master/protocol/openid-connect/token`,
             headers: { 'content-type': 'application/x-www-form-urlencoded' },
             data,
         };
@@ -77,7 +77,7 @@ const Registration = (props) => {
 
             const options = {
                 method: 'POST',
-                url: 'http://localhost:8181/auth/admin/realms/template/users',
+                url: `${process.env.REACT_APP_BASE_URL_AUTH}/auth/admin/realms/template/users`,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${response.data.access_token}`,
