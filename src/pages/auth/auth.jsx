@@ -47,16 +47,12 @@ const Auth = () => {
             .then(function (response) {
                 console.log(response);
                 setError(false);
-                history('/');
+                history(-1);
                 setIsLoading(false);
-                dispatch({
-                    type: 'Auth',
-                    payload: {
-                        token: response.data.access_token,
-                        refresh_token: response.data.refresh_token,
-                        expires_in: Date.now() + (response.data.expires_in * 1000)
-                    }
-                });
+                sessionStorage.setItem('token', response.data.access_token);
+                sessionStorage.setItem('refresh_token', response.data.refresh_token);
+                sessionStorage.setItem('expires_in', Date.now() + (response.data.expires_in * 1000));
+                sessionStorage.setItem('isAuth', true);
             })
             .catch(function (error) {
                 console.error(error);

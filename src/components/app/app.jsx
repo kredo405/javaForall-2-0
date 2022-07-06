@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { nanoid } from 'nanoid';
-import { useSelector } from "react-redux";
 import NavBar from '../navbar/navbar';
 import JavaForallSevices from '../../services/javaForalServices';
 import RefreshToken from '../../services/keycloakServices';
@@ -22,7 +21,9 @@ const App = () => {
     const [error, setError] = useState('');
     const [auth, setAuth] = useState(false);
     const [user, setUser] = useState('');
-    const { token, isAuth } = useSelector(state => state);
+    const token = sessionStorage.getItem('token');
+    const expiresIn = sessionStorage.getItem('expires_in');
+    const isAuth = sessionStorage.getItem('isAuth');
     const history = useNavigate();
     const javaForalServices = new JavaForallSevices();
 
@@ -57,14 +58,14 @@ const App = () => {
         if (!isAuth) {
             history('/main/auth');
         } else {
-            // if (Date.now() >= token.expires_in) {
-            //     RefreshToken(deleteItem);
-            // } else {
+            if (Date.now() >= expiresIn) {
+                RefreshToken(deleteItem);
+            } else {
                 const options = {
                     method: 'DELETE',
                     url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
                     headers: {
-                        'Authorization': `Bearer ${token.token}`
+                        'Authorization': `Bearer ${token}`
                     }
                 }
                 axios
@@ -84,7 +85,7 @@ const App = () => {
                             setError(error);
                         }
                     });
-            // }
+            }
         }
     }
 
@@ -163,6 +164,7 @@ const App = () => {
                         data={visibleData}
                         onDelete={deleteItem}
                         onAdd={addItem}
+                        getUsers={getUsers}
                     />
                 } />
                 <Route path="/main/student/:id" element={

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useSelector } from "react-redux";
 import RefreshToken from '../services/keycloakServices'
 import ErrorMessage from '../components/error-message/error-message';
 import Box from '@mui/material/Box';
@@ -24,18 +23,20 @@ const Student = () => {
     const history = useNavigate();
 
     const { id } = useParams();
-    const { token, isAuth } = useSelector(state => state);
+    const token = sessionStorage.getItem('token');
+    const expiresIn = sessionStorage.getItem('expires_in');
+    const isAuth = sessionStorage.getItem('isAuth');
 
     const getInfo = () => {
         if(isAuth) {
-            // if(Date.now() >= token.expires_in) {
-            //     // RefreshToken(getInfo);
-            // } else {
+            if(Date.now() >= expiresIn) {
+                RefreshToken(getInfo);
+            } else {
                 const options = {
                     method: 'GET',
                     url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer/${id}`,
                     headers: {
-                        'Authorization': `Bearer ${token.token}`
+                        'Authorization': `Bearer ${token}`
                     },
                 };
                 axios
@@ -62,7 +63,7 @@ const Student = () => {
                             setError(error);
                         }
                     });
-            // }
+            }
             
         } else {
             history('/main/auth');

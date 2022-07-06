@@ -4,7 +4,7 @@ import AppFilter from '../components/app-filter/app-filter';
 import UsersList from '../components/users-list/users-list';
 import UsersAddForm from '../components/users-add-form/users-add-form';
 
-const Home = ({ onUpdateSearch, filter, onFilterSelect, users, data, onDelete, onToggleProp, onAdd, isAuth }) => {
+const Home = ({ getUsers, onUpdateSearch, filter, onFilterSelect, users, data, onDelete, onToggleProp, onAdd, isAuth }) => {
 
     return (
         <div className='home'>
@@ -20,7 +20,7 @@ const Home = ({ onUpdateSearch, filter, onFilterSelect, users, data, onDelete, o
                 onDelete={onDelete}
                 onToggleProp={onToggleProp}
                 isAuth={isAuth} />
-            <UsersAddForm onAdd={onAdd} />
+            <UsersAddForm onAdd={onAdd} getUsers={getUsers} />
         </div>
     );
 }

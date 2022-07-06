@@ -1,18 +1,16 @@
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { Navbar, Container, Button } from 'react-bootstrap';
 import './navbar.scss';
 import Stack from '@mui/material/Stack';;
 
 
-const NavBar = (props) => {
+const NavBar = () => {
     const history = useNavigate();
-    const dispatch = useDispatch();
-    const { isAuth } = useSelector(state => state);
+    const isAuth = sessionStorage.getItem('isAuth');
 
     const logout = () => {
-        dispatch({ type: 'OUT' })
+        sessionStorage.clear();
     };
 
     return (

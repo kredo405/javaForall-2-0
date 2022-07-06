@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import './users-add-form.scss';
+import qs from 'qs';
 import axios from 'axios';
 
 class UsersAddForm extends Component {
@@ -85,23 +86,22 @@ class UsersAddForm extends Component {
             }
     
                 const options = {
-                    method: 'POST',
+                    method: 'post',
                     url: `${process.env.REACT_APP_BASE_URL_DATA}/api/front/developer`,
                     headers: {
                         'Content-Type': 'application/json;charset=utf-8',
-                        // 'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify(body),
+                    data: JSON.stringify(body),
                 }
                 axios
                     .request(options)
                     .then((response) => {
                         console.log(response);
-                        // getUsers();
+                        this.props.getUsers();
                     })
                     .catch((error) => {
                         console.error(error);
-                        // getUsers();
+                        this.props.getUsers();
                         if (error.response.data !== undefined && error.response.data !== '') {
                             // setIsError(true);
                             // setError(error.response.data);
